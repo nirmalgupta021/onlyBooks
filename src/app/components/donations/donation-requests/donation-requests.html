@@ -1,0 +1,303 @@
+<div class="donation-requests-container">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-0 text-gradient">Donation Requests</h2>
+      <p class="text-muted mb-0">Review and manage book donation requests</p>
+    </div>
+    <a routerLink="/admin/donations/history" class="btn btn-outline-primary">
+      <i class="fas fa-history me-2"></i>View History
+    </a>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="stat-card bg-warning">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ pendingCount }}</h3>
+          <p>Pending Requests</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-success">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ approvedCount }}</h3>
+          <p>Approved Today</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card bg-info">
+        <div class="stat-icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <div class="stat-content">
+          <h3>{{ totalBooksReceived }}</h3>
+          <p>Books This Month</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="fas fa-search"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Search donations..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearch()"
+            />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select 
+            class="form-select" 
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="onStatusChange()"
+          >
+            <option value="">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="selectedDate"
+            (ngModelChange)="onDateChange()"
+            placeholder="Filter by date"
+          />
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="fas fa-times me-2"></i>Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading donation requests...</p>
+  </div>
+
+  <!-- Donations Grid -->
+  <div *ngIf="!isLoading" class="row">
+    <div class="col-lg-6 col-xl-4 mb-4" *ngFor="let donation of donations">
+      <div class="donation-card">
+        <div class="donation-header">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5 class="donation-title">{{ donation.bookTitle }}</h5>
+              <p class="donation-author text-muted">by {{ donation.author }}</p>
+            </div>
+            <span 
+              class="badge"
+              [class.bg-warning]="donation.status === 'Pending'"
+              [class.bg-success]="donation.status === 'Approved'"
+              [class.bg-danger]="donation.status === 'Rejected'"
+            >
+              {{ donation.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="donation-image" *ngIf="donation.imageUrl">
+          <img [src]="donation.imageUrl" [alt]="donation.bookTitle" class="img-fluid">
+        </div>
+
+        <div class="donation-details">
+          <div class="detail-item">
+            <strong>Member:</strong> {{ donation.memberName }}
+          </div>
+          <div class="detail-item">
+            <strong>Condition:</strong> 
+            <span 
+              class="condition-badge"
+              [class.excellent]="donation.condition === 'Excellent'"
+              [class.good]="donation.condition === 'Good'"
+              [class.fair]="donation.condition === 'Fair'"
+              [class.poor]="donation.condition === 'Poor'"
+            >
+              {{ donation.condition }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <strong>Quantity:</strong> {{ donation.quantity }} {{ donation.quantity === 1 ? 'copy' : 'copies' }}
+          </div>
+          <div class="detail-item">
+            <strong>Submitted:</strong> {{ formatDate(donation.submissionDate) }}
+          </div>
+          <div class="detail-item" *ngIf="donation.description">
+            <strong>Description:</strong>
+            <p class="description-text">{{ donation.description }}</p>
+          </div>
+        </div>
+
+        <div class="donation-actions" *ngIf="donation.status === 'Pending'">
+          <button
+            class="btn btn-success btn-sm me-2"
+            (click)="openApprovalModal(donation)"
+          >
+            <i class="fas fa-check me-1"></i>Approve
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="openRejectionModal(donation)"
+          >
+            <i class="fas fa-times me-1"></i>Reject
+          </button>
+        </div>
+
+        <div class="donation-comments" *ngIf="donation.adminComments && donation.status !== 'Pending'">
+          <div class="comments-header">
+            <i class="fas fa-comment-dots me-2"></i>Admin Comments:
+          </div>
+          <p class="comments-text">{{ donation.adminComments }}</p>
+          <small class="text-muted">
+            Reviewed by {{ donation.reviewedBy }} on {{ formatDate(donation.reviewDate!) }}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Donations Found -->
+  <div *ngIf="!isLoading && donations.length === 0" class="text-center py-5">
+    <i class="fas fa-heart fa-3x text-muted mb-3"></i>
+    <h5 class="text-muted">No Donation Requests Found</h5>
+    <p class="text-muted">There are no donation requests matching your criteria.</p>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="totalPages > 1" class="d-flex justify-content-center mt-4">
+    <app-pagination
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (pageChange)="onPageChange($event)"
+    ></app-pagination>
+  </div>
+</div>
+
+<!-- Approval Modal -->
+<div class="modal fade" id="approvalModal" tabindex="-1" *ngIf="showApprovalModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-check-circle me-2"></i>Approve Donation
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeApprovalModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="donation-summary mb-3">
+          <h6>{{ selectedDonation?.bookTitle }}</h6>
+          <p class="text-muted mb-1">by {{ selectedDonation?.author }}</p>
+          <p class="text-muted">Donated by: {{ selectedDonation?.memberName }}</p>
+        </div>
+        <div class="mb-3">
+          <label for="approvalComments" class="form-label">Comments (Optional)</label>
+          <textarea
+            id="approvalComments"
+            class="form-control"
+            rows="3"
+            placeholder="Enter comments about the approval..."
+            [(ngModel)]="approvalComments"
+          ></textarea>
+        </div>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>
+          Approved books will be automatically added to the library inventory.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeApprovalModal()">
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-success"
+          (click)="confirmApproval()"
+          [disabled]="isProcessing"
+        >
+          <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+          <i class="fas fa-check me-2" *ngIf="!isProcessing"></i>
+          {{ isProcessing ? 'Approving...' : 'Approve Donation' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rejection Modal -->
+<div class="modal fade" id="rejectionModal" tabindex="-1" *ngIf="showRejectionModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">
+          <i class="fas fa-times-circle me-2"></i>Reject Donation
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeRejectionModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="donation-summary mb-3">
+          <h6>{{ selectedDonation?.bookTitle }}</h6>
+          <p class="text-muted mb-1">by {{ selectedDonation?.author }}</p>
+          <p class="text-muted">Donated by: {{ selectedDonation?.memberName }}</p>
+        </div>
+        <div class="mb-3">
+          <label for="rejectionComments" class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
+          <textarea
+            id="rejectionComments"
+            class="form-control"
+            rows="3"
+            placeholder="Please provide a reason for rejecting this donation..."
+            [(ngModel)]="rejectionComments"
+            required
+          ></textarea>
+        </div>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Please provide a clear reason for rejection to help the member understand.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeRejectionModal()">
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger"
+          (click)="confirmRejection()"
+          [disabled]="isProcessing || !rejectionComments.trim()"
+        >
+          <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+          <i class="fas fa-times me-2" *ngIf="!isProcessing"></i>
+          {{ isProcessing ? 'Rejecting...' : 'Reject Donation' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

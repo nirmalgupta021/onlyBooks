@@ -1,0 +1,329 @@
+<div class="member-search-container">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-0 text-gradient">Advanced Member Search</h2>
+      <p class="text-muted mb-0">Search members using advanced criteria</p>
+    </div>
+    <a routerLink="/admin/members" class="btn btn-outline-secondary">
+      <i class="fas fa-arrow-left me-2"></i>Back to Members
+    </a>
+  </div>
+
+  <!-- Advanced Search Form -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">
+        <i class="fas fa-search me-2"></i>Search Criteria
+      </h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="searchForm" (ngSubmit)="onSearch()" novalidate>
+        <div class="row g-3">
+          <!-- Member Name -->
+          <div class="col-md-6">
+            <label for="memberName" class="form-label">Member Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="memberName"
+              formControlName="memberName"
+              placeholder="Enter member name"
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email Address</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              formControlName="email"
+              placeholder="Enter email address"
+            />
+          </div>
+
+          <!-- Mobile Number -->
+          <div class="col-md-6">
+            <label for="mobileNumber" class="form-label">Mobile Number</label>
+            <input
+              type="text"
+              class="form-control"
+              id="mobileNumber"
+              formControlName="mobileNumber"
+              placeholder="Enter mobile number"
+            />
+          </div>
+
+          <!-- Member ID -->
+          <div class="col-md-6">
+            <label for="memberId" class="form-label">Member ID</label>
+            <input
+              type="text"
+              class="form-control"
+              id="memberId"
+              formControlName="memberId"
+              placeholder="Enter member ID"
+            />
+          </div>
+
+          <!-- Registration Date Range -->
+          <div class="col-md-6">
+            <label for="registrationDateFrom" class="form-label">Registration Date From</label>
+            <input
+              type="date"
+              class="form-control"
+              id="registrationDateFrom"
+              formControlName="registrationDateFrom"
+            />
+          </div>
+
+          <div class="col-md-6">
+            <label for="registrationDateTo" class="form-label">Registration Date To</label>
+            <input
+              type="date"
+              class="form-control"
+              id="registrationDateTo"
+              formControlName="registrationDateTo"
+            />
+          </div>
+
+          <!-- Status -->
+          <div class="col-md-4">
+            <label for="status" class="form-label">Account Status</label>
+            <select class="form-select" id="status" formControlName="status">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+
+          <!-- Fine Status -->
+          <div class="col-md-4">
+            <label for="fineStatus" class="form-label">Fine Status</label>
+            <select class="form-select" id="fineStatus" formControlName="fineStatus">
+              <option value="">All Members</option>
+              <option value="withFines">With Outstanding Fines</option>
+              <option value="noFines">No Fines</option>
+            </select>
+          </div>
+
+          <!-- Book Status -->
+          <div class="col-md-4">
+            <label for="bookStatus" class="form-label">Book Status</label>
+            <select class="form-select" id="bookStatus" formControlName="bookStatus">
+              <option value="">All Members</option>
+              <option value="activeBorrowers">Active Borrowers</option>
+              <option value="overdue">With Overdue Books</option>
+              <option value="noBooksOut">No Books Out</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Actions -->
+        <div class="d-flex justify-content-end mt-4">
+          <button
+            type="button"
+            class="btn btn-outline-secondary me-3"
+            (click)="resetSearch()"
+          >
+            <i class="fas fa-undo me-2"></i>Reset
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isSearching"
+          >
+            <span *ngIf="isSearching" class="spinner-border spinner-border-sm me-2"></span>
+            <i class="fas fa-search me-2" *ngIf="!isSearching"></i>
+            {{ isSearching ? 'Searching...' : 'Search Members' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="card" *ngIf="hasSearched">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">
+        <i class="fas fa-users me-2"></i>Search Results
+      </h5>
+      <div class="d-flex align-items-center">
+        <span class="badge bg-primary me-2">{{ totalResults }} Results</span>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <!-- Loading State -->
+      <div *ngIf="isSearching" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Searching...</span>
+        </div>
+        <p class="mt-3 text-muted">Searching members...</p>
+      </div>
+
+      <!-- Results Table -->
+      <div class="table-responsive" *ngIf="!isSearching && searchResults.length > 0">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Member Details</th>
+              <th>Contact Information</th>
+              <th>Registration</th>
+              <th>Status & Activity</th>
+              <th>Books & Fines</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let member of searchResults" class="align-middle">
+              <td>
+                <div>
+                  <h6 class="mb-1">{{ member.name }}</h6>
+                  <small class="text-muted">ID: {{ member.id }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="contact-info">
+                  <small>
+                    <i class="fas fa-envelope me-1"></i>{{ member.email }}
+                  </small>
+                  <small>
+                    <i class="fas fa-phone me-1"></i>{{ member.mobileNumber }}
+                  </small>
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  <div class="fw-bold">{{ formatDate(member.registrationDate) }}</div>
+                  <small class="text-muted">{{ getMembershipDuration(member.registrationDate) }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  <span 
+                    class="badge mb-1"
+                    [class.bg-success]="member.isActive"
+                    [class.bg-danger]="!member.isActive"
+                  >
+                    {{ member.isActive ? 'Active' : 'Inactive' }}
+                  </span>
+                  <div *ngIf="member.hasOverdueBooks">
+                    <span class="badge bg-warning text-dark">
+                      <i class="fas fa-exclamation-triangle me-1"></i>Overdue
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  <div class="row">
+                    <div class="col-6">
+                      <div class="stat-mini">
+                        <div class="fw-bold text-info">{{ member.currentBorrowedBooks }}</div>
+                        <small class="text-muted">Books</small>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="stat-mini">
+                        <div 
+                          class="fw-bold"
+                          [class.text-danger]="member.totalFines > 0"
+                          [class.text-success]="member.totalFines === 0"
+                        >
+                          ₹{{ member.totalFines }}
+                        </div>
+                        <small class="text-muted">Fine</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button
+                    class="btn btn-sm btn-outline-info"
+                    (click)="viewMemberDetails(member.id)"
+                    title="View Details"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-success"
+                    (click)="sendNotification(member)"
+                    [disabled]="!member.isActive"
+                    title="Send Notification"
+                  >
+                    <i class="fas fa-bell"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Results Found -->
+      <div *ngIf="!isSearching && hasSearched && searchResults.length === 0" class="text-center py-5">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted">No Members Found</h5>
+        <p class="text-muted">Try adjusting your search criteria to find more members.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="card-footer" *ngIf="totalPages > 1">
+      <app-pagination
+        [currentPage]="currentPage"
+        [totalPages]="totalPages"
+        (pageChange)="onPageChange($event)"
+      ></app-pagination>
+    </div>
+  </div>
+
+  <!-- Search Tips -->
+  <div class="card mt-4" *ngIf="!hasSearched">
+    <div class="card-header">
+      <h6 class="card-title mb-0">
+        <i class="fas fa-lightbulb me-2"></i>Search Tips
+      </h6>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>
+              Use partial names for broader search results
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>
+              Search by email domain (e.g., @gmail.com)
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>
+              Use date ranges to find members by registration period
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <ul class="list-unstyled">
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>
+              Filter by status to find active/inactive members
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>
+              Search for members with outstanding fines
+            </li>
+            <li class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>
+              Find members with overdue books
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

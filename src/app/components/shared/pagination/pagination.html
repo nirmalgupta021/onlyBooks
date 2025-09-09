@@ -1,0 +1,58 @@
+<nav *ngIf="totalPages > 1" aria-label="Pagination">
+  <ul class="pagination pagination-sm justify-content-center mb-0">
+    <!-- Previous Button -->
+    <li class="page-item" [class.disabled]="currentPage === 0">
+      <button
+        class="page-link"
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 0"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </li>
+
+    <!-- First Page -->
+    <li class="page-item" *ngIf="showFirstPage" [class.active]="currentPage === 0">
+      <button class="page-link" (click)="goToPage(0)">1</button>
+    </li>
+
+    <!-- First Ellipsis -->
+    <li class="page-item disabled" *ngIf="showFirstEllipsis">
+      <span class="page-link">...</span>
+    </li>
+
+    <!-- Page Numbers -->
+    <li 
+      class="page-item" 
+      *ngFor="let page of visiblePages" 
+      [class.active]="currentPage === page"
+    >
+      <button class="page-link" (click)="goToPage(page)">{{ page + 1 }}</button>
+    </li>
+
+    <!-- Last Ellipsis -->
+    <li class="page-item disabled" *ngIf="showLastEllipsis">
+      <span class="page-link">...</span>
+    </li>
+
+    <!-- Last Page -->
+    <li 
+      class="page-item" 
+      *ngIf="showLastPage" 
+      [class.active]="currentPage === totalPages - 1"
+    >
+      <button class="page-link" (click)="goToPage(totalPages - 1)">{{ totalPages }}</button>
+    </li>
+
+    <!-- Next Button -->
+    <li class="page-item" [class.disabled]="currentPage === totalPages - 1">
+      <button
+        class="page-link"
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages - 1"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </li>
+  </ul>
+</nav>

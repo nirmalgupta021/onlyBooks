@@ -1,0 +1,123 @@
+<div class="sidebar bg-white shadow-sm">
+  <div class="sidebar-header p-3 border-bottom">
+    <h6 class="mb-0 text-muted">NAVIGATION</h6>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/dashboard" routerLinkActive="active">
+          <i class="fas fa-tachometer-alt me-2"></i>
+          Dashboard
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="collapse"
+          href="#booksSubmenu"
+          role="button"
+          [attr.aria-expanded]="isBookMenuOpen"
+          (click)="toggleBookMenu()"
+        >
+          <i class="fas fa-book me-2"></i>
+          Book Management
+          <i class="fas fa-chevron-down ms-auto" [class.rotate-180]="isBookMenuOpen"></i>
+        </a>
+        <div class="collapse" id="booksSubmenu" [class.show]="isBookMenuOpen">
+          <ul class="nav flex-column ms-3">
+            <li class="nav-item">
+              <a class="nav-link sub-link" routerLink="/admin/books" routerLinkActive="active">
+                <i class="fas fa-list me-2"></i>All Books
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link sub-link" routerLink="/admin/books/add" routerLinkActive="active">
+                <i class="fas fa-plus me-2"></i>Add Book
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/members" routerLinkActive="active">
+          <i class="fas fa-users me-2"></i>
+          Members Management
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="collapse"
+          href="#donationsSubmenu"
+          role="button"
+          [attr.aria-expanded]="isDonationMenuOpen"
+          (click)="toggleDonationMenu()"
+        >
+          <i class="fas fa-heart me-2"></i>
+          Donations
+          <i class="fas fa-chevron-down ms-auto" [class.rotate-180]="isDonationMenuOpen"></i>
+        </a>
+        <div class="collapse" id="donationsSubmenu" [class.show]="isDonationMenuOpen">
+          <ul class="nav flex-column ms-3">
+            <li class="nav-item">
+              <a class="nav-link sub-link" routerLink="/admin/donations" routerLinkActive="active">
+                <i class="fas fa-clock me-2"></i>Pending Requests
+                <span class="badge bg-warning ms-auto" *ngIf="pendingDonationsCount > 0">
+                  {{ pendingDonationsCount }}
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link sub-link" routerLink="/admin/donations/history" routerLinkActive="active">
+                <i class="fas fa-history me-2"></i>History
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="collapse"
+          href="#complaintsSubmenu"
+          role="button"
+          [attr.aria-expanded]="isComplaintMenuOpen"
+          (click)="toggleComplaintMenu()"
+        >
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Complaints
+          <i class="fas fa-chevron-down ms-auto" [class.rotate-180]="isComplaintMenuOpen"></i>
+        </a>
+        <div class="collapse" id="complaintsSubmenu" [class.show]="isComplaintMenuOpen">
+          <ul class="nav flex-column ms-3">
+            <li class="nav-item">
+              <a class="nav-link sub-link" routerLink="/admin/complaints" routerLinkActive="active">
+                <i class="fas fa-list me-2"></i>All Complaints
+                <span class="badge bg-danger ms-auto" *ngIf="pendingComplaintsCount > 0">
+                  {{ pendingComplaintsCount }}
+                </span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link sub-link" routerLink="/admin/complaints/manage" routerLinkActive="active">
+                <i class="fas fa-cogs me-2"></i>Manage
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/admin/reports" routerLinkActive="active">
+          <i class="fas fa-chart-bar me-2"></i>
+          Reports & Analytics
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

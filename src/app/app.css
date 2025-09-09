@@ -1,0 +1,61 @@
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.main-content.with-sidebar {
+  margin-top: 60px;
+  margin-left: 250px; /* ✅ Add this - adjust to match your sidebar width */
+}
+
+.content-wrapper {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+
+.content-wrapper.full-width {
+  padding: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* ✅ Add sidebar positioning */
+.sidebar {
+  position: fixed;
+  top: 60px; /* Below header */
+  left: 0;
+  width: 250px; /* Adjust to your sidebar width */
+  height: calc(100vh - 60px); /* Full height minus header */
+  background: white;
+  z-index: 1000;
+  overflow-y: auto;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 10px;
+  }
+  
+  /* ✅ Mobile responsive */
+  .main-content.with-sidebar {
+    margin-left: 0; /* Remove left margin on mobile */
+  }
+  
+  .sidebar {
+    transform: translateX(-100%); /* Hide sidebar on mobile */
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0); /* Show when hamburger menu clicked */
+  }
+}

@@ -1,0 +1,85 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="text-center mb-4">
+      <i class="fas fa-book-open fa-3x text-primary mb-3"></i>
+      <h2 class="fw-bold">OnlyBooks Admin</h2>
+      <p class="text-muted">Sign in to your admin account</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-envelope"></i>
+          </span>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="email"
+            placeholder="Enter your email"
+            [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
+          />
+        </div>
+        <div class="invalid-feedback" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+          <div *ngIf="email?.errors?.['required']">Email is required</div>
+          <div *ngIf="email?.errors?.['email']">Please enter a valid email</div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+          <span class="input-group-text">
+            <i class="fas fa-lock"></i>
+          </span>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            id="password"
+            formControlName="password"
+            placeholder="Enter your password"
+            [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="togglePasswordVisibility()"
+          >
+            <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+          <div *ngIf="password?.errors?.['required']">Password is required</div>
+        </div>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="errorMessage" role="alert">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="alert alert-warning" *ngIf="lockoutMessage" role="alert">
+        <i class="fas fa-lock me-2"></i>
+        {{ lockoutMessage }}
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 py-2"
+        [disabled]="loginForm.invalid || isLoading"
+      >
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+        <i class="fas fa-sign-in-alt me-2" *ngIf="!isLoading"></i>
+        {{ isLoading ? 'Signing In...' : 'Sign In' }}
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <small class="text-muted">
+        © 2025 OnlyBooks Library Management System
+      </small>
+    </div>
+  </div>
+</div>

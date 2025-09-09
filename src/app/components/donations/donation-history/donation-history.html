@@ -1,0 +1,86 @@
+<div class="donation-history-container">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-0 text-gradient">Donation History</h2>
+      <p class="text-muted mb-0">Complete history of all donation requests</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a routerLink="/admin/donations" class="btn btn-outline-primary">
+        <i class="fas fa-arrow-left me-2"></i>Back to Requests
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <select class="form-select" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+            <option value="">All Status</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <input type="date" class="form-control" [(ngModel)]="startDate" (ngModelChange)="applyFilters()" />
+        </div>
+        <div class="col-md-3">
+          <input type="date" class="form-control" [(ngModel)]="endDate" (ngModelChange)="applyFilters()" />
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+            <i class="fas fa-times me-2"></i>Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- History Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0">Donation History</h5>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Book Details</th>
+              <th>Member</th>
+              <th>Condition</th>
+              <th>Decision</th>
+              <th>Reviewed By</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let donation of donations">
+              <td>
+                <h6 class="mb-1">{{ donation.bookTitle }}</h6>
+                <small class="text-muted">by {{ donation.author }}</small>
+              </td>
+              <td>{{ donation.memberName }}</td>
+              <td>
+                <span class="condition-badge" [class]="donation.condition.toLowerCase()">
+                  {{ donation.condition }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" 
+                      [class.bg-success]="donation.status === 'Approved'"
+                      [class.bg-danger]="donation.status === 'Rejected'">
+                  {{ donation.status }}
+                </span>
+              </td>
+              <td>{{ donation.reviewedBy || '-' }}</td>
+              <td>{{ donation.reviewDate ? formatDate(donation.reviewDate) : '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
