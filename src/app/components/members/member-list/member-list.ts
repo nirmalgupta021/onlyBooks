@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MemberService } from '../../../services/member';
 import { NotificationService } from '../../../services/notification';
@@ -42,7 +42,8 @@ export class MemberListComponent implements OnInit {
 
   constructor(
     private memberService: MemberService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -120,8 +121,7 @@ export class MemberListComponent implements OnInit {
   }
 
   viewMemberDetails(memberId: string) {
-    // Navigate to member details
-    // Router navigation implementation
+    this.router.navigate(['/admin/members', memberId]);
   }
 
   toggleMemberStatus(member: Member) {

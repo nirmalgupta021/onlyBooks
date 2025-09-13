@@ -1,1 +1,284 @@
-<p>complaint-management works!</p>
+<div class="complaint-management-container">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-0 text-gradient">Complaint Analytics & Management</h2>
+      <p class="text-muted mb-0">Comprehensive complaint analytics and performance insights</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-success" (click)="exportReport()">
+        <i class="fas fa-download me-2"></i>Export Report
+      </button>
+      <button class="btn btn-outline-secondary" (click)="navigateToComplaintList()">
+        <i class="fas fa-list me-2"></i>View All
+      </button>
+      <button class="btn btn-primary" (click)="refreshData()">
+        <i class="fas fa-sync me-2"></i>Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading analytics data...</p>
+  </div>
+
+  <!-- Analytics Content -->
+  <div *ngIf="!isLoading">
+    <!-- Key Performance Indicators -->
+    <div class="row g-4 mb-4">
+      <div class="col-xl-2 col-lg-4 col-md-6">
+        <div class="kpi-card">
+          <div class="kpi-icon bg-primary">
+            <i class="fas fa-clock"></i>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-value">{{ kpis.avgResponseTime }}h</div>
+            <div class="kpi-label">Avg Response Time</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-lg-4 col-md-6">
+        <div class="kpi-card">
+          <div class="kpi-icon bg-success">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-value">{{ kpis.resolutionRate | number:'1.1-1' }}%</div>
+            <div class="kpi-label">Resolution Rate</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-lg-4 col-md-6">
+        <div class="kpi-card">
+          <div class="kpi-icon bg-info">
+            <i class="fas fa-star"></i>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-value">{{ kpis.customerSatisfaction }}/5</div>
+            <div class="kpi-label">Satisfaction</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-lg-4 col-md-6">
+        <div class="kpi-card">
+          <div class="kpi-icon bg-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-value">{{ kpis.pendingOverdue }}</div>
+            <div class="kpi-label">Pending</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-lg-4 col-md-6">
+        <div class="kpi-card">
+          <div class="kpi-icon bg-secondary">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-value">{{ kpis.avgResolutionTime }}d</div>
+            <div class="kpi-label">Avg Resolution</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-xl-2 col-lg-4 col-md-6">
+        <div class="kpi-card">
+          <div class="kpi-icon bg-danger">
+            <i class="fas fa-arrow-up"></i>
+          </div>
+          <div class="kpi-content">
+            <div class="kpi-value">{{ kpis.escalationRate }}%</div>
+            <div class="kpi-label">Escalation Rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+      <!-- Monthly Trend Chart -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-chart-line me-2"></i>Complaint Trends
+            </h5>
+            <select class="form-select form-select-sm" style="width: auto;" [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
+              <option *ngFor="let period of periodOptions" [value]="period.value">
+                {{ period.label }}
+              </option>
+            </select>
+          </div>
+          <div class="card-body">
+            <div class="chart-container" *ngIf="monthlyTrendData; else noChartData">
+              <!-- Real chart would be rendered here with Chart.js or similar -->
+              <div class="chart-placeholder">
+                <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Complaint Trend Chart</p>
+                <small class="text-muted">Data from backend: {{ selectedPeriod }} trends</small>
+              </div>
+            </div>
+            <ng-template #noChartData>
+              <div class="chart-placeholder">
+                <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No chart data available</p>
+                <small class="text-muted">Connect backend to view complaint trends</small>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Distribution -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-chart-pie me-2"></i>Status Distribution
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="status-distribution" *ngIf="dashboardStats; else noStatusData">
+              <div class="status-item" *ngFor="let status of statusOptions; let i = index" (click)="onStatusChartClick(status)">
+                <div class="status-color"></div>
+                <div class="status-details">
+                  <div class="status-name">{{ status }}</div>
+                  <div class="status-count">{{ getStatusCount(status) }}</div>
+                </div>
+                <div class="status-percentage">Loading...</div>
+              </div>
+            </div>
+            <ng-template #noStatusData>
+              <div class="text-center py-4">
+                <i class="fas fa-chart-pie fa-2x text-muted mb-3"></i>
+                <p class="text-muted">No status data available</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Complaints and Quick Actions -->
+    <div class="row g-4">
+      <!-- Recent Complaints -->
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-clock me-2"></i>Recent Complaints
+            </h5>
+            <a class="btn btn-sm btn-outline-primary" (click)="navigateToComplaintList()">
+              View All
+            </a>
+          </div>
+          <div class="card-body">
+            <div *ngIf="recentComplaints.length > 0; else noRecentComplaints">
+              <div class="complaint-item" *ngFor="let complaint of recentComplaints" (click)="navigateToComplaintDetails(complaint.id)">
+                <div class="complaint-header">
+                  <div class="complaint-id">
+                    <code>{{ complaint.id | slice:0:8 }}</code>
+                  </div>
+                  <span [class]="getStatusBadgeClass(complaint.status)">{{ complaint.status }}</span>
+                </div>
+                <div class="complaint-content">
+                  <div class="complaint-title">{{ complaint.title }}</div>
+                  <div class="complaint-meta">
+                    <span class="me-3">
+                      <i class="fas fa-user me-1"></i>{{ complaint.memberName }}
+                    </span>
+                    <span class="me-3">
+                      <i class="fas fa-tag me-1"></i>{{ complaint.category }}
+                    </span>
+                    <span>
+                      <i class="fas fa-clock me-1"></i>{{ formatDate(complaint.submissionDate) }}
+                    </span>
+                  </div>
+                </div>
+                <div class="complaint-priority">
+                  <span [class]="getPriorityBadgeClass(complaint.priority)">{{ complaint.priority }}</span>
+                </div>
+              </div>
+            </div>
+            <ng-template #noRecentComplaints>
+              <div class="text-center py-4">
+                <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
+                <p class="text-muted">No recent complaints</p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="col-lg-4">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-bolt me-2"></i>Quick Actions
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <button class="btn btn-warning" (click)="navigateToPendingComplaints()">
+                <i class="fas fa-clock me-2"></i>View Pending
+                <span class="badge bg-light text-dark ms-2">{{ dashboardStats?.pendingComplaints || 0 }}</span>
+              </button>
+              
+              <button class="btn btn-info" (click)="navigateToInProgressComplaints()">
+                <i class="fas fa-cog me-2"></i>In Progress
+              </button>
+              
+              <button class="btn btn-success" (click)="navigateToResolvedComplaints()">
+                <i class="fas fa-check-circle me-2"></i>View Resolved
+              </button>
+              
+              <button class="btn btn-outline-primary" (click)="exportReport()">
+                <i class="fas fa-file-export me-2"></i>Export Report
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-chart-bar me-2"></i>Summary Statistics
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="summary-stat">
+              <div class="stat-label">Total Complaints</div>
+              <div class="stat-value text-primary">{{ dashboardStats?.totalComplaints || 0 }}</div>
+            </div>
+            
+            <div class="summary-stat">
+              <div class="stat-label">Pending Review</div>
+              <div class="stat-value text-warning">{{ dashboardStats?.pendingComplaints || 0 }}</div>
+            </div>
+            
+            <div class="summary-stat">
+              <div class="stat-label">Monthly Resolved</div>
+              <div class="stat-value text-success">{{ dashboardStats?.monthlyStats?.complaintsResolved || 0 }}</div>
+            </div>
+            
+            <div class="summary-stat">
+              <div class="stat-label">Response Rate</div>
+              <div class="stat-value text-info">{{ kpis.resolutionRate | number:'1.1-1' }}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

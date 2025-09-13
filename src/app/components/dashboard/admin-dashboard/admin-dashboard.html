@@ -27,8 +27,9 @@
   <div *ngIf="!isLoading">
     <!-- Stats Cards -->
     <div class="row g-4 mb-4">
+      <!-- 📚 Books Card - ADD CLICK HANDLER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="stats-card bg-primary">
+        <div class="stats-card bg-primary" style="cursor: pointer;" (click)="navigateToBooks()">
           <div class="stats-icon">
             <i class="fas fa-book"></i>
           </div>
@@ -43,8 +44,9 @@
         </div>
       </div>
 
+      <!-- 👥 Members Card - ADD CLICK HANDLER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="stats-card bg-success">
+        <div class="stats-card bg-success" style="cursor: pointer;" (click)="navigateToMembers()">
           <div class="stats-icon">
             <i class="fas fa-users"></i>
           </div>
@@ -59,8 +61,9 @@
         </div>
       </div>
 
+      <!-- 📖 Borrowed Books Card - ADD CLICK HANDLER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="stats-card bg-warning">
+        <div class="stats-card bg-warning" style="cursor: pointer;" (click)="navigateToBooks()">
           <div class="stats-icon">
             <i class="fas fa-book-reader"></i>
           </div>
@@ -75,8 +78,9 @@
         </div>
       </div>
 
+      <!-- 📞 Complaints Card - ADD CLICK HANDLER -->
       <div class="col-xl-3 col-lg-6 col-md-6">
-        <div class="stats-card bg-danger">
+        <div class="stats-card bg-danger" style="cursor: pointer;" (click)="navigateToComplaints()">
           <div class="stats-icon">
             <i class="fas fa-exclamation-triangle"></i>
           </div>
@@ -104,41 +108,48 @@
           </div>
           <div class="card-body">
             <div class="row g-3">
+              <!-- 📚 Add Book - CHANGE TO CLICK HANDLER -->
               <div class="col-md-6">
-                <a routerLink="/admin/books/add" class="quick-action-card">
+                <div class="quick-action-card" style="cursor: pointer;" (click)="navigateToBookManagement()">
                   <i class="fas fa-plus-circle"></i>
                   <div>
                     <h6>Add New Book</h6>
                     <p>Add books to library</p>
                   </div>
-                </a>
+                </div>
               </div>
+              
+              <!-- 👥 Manage Members - CHANGE TO CLICK HANDLER -->
               <div class="col-md-6">
-                <a routerLink="/admin/members" class="quick-action-card">
+                <div class="quick-action-card" style="cursor: pointer;" (click)="navigateToMembers()">
                   <i class="fas fa-users"></i>
                   <div>
                     <h6>Manage Members</h6>
                     <p>View member details</p>
                   </div>
-                </a>
+                </div>
               </div>
+              
+              <!-- ❤️ Review Donations - CHANGE TO CLICK HANDLER -->
               <div class="col-md-6">
-                <a routerLink="/admin/donations" class="quick-action-card">
+                <div class="quick-action-card" style="cursor: pointer;" (click)="navigateToPendingDonations()">
                   <i class="fas fa-heart"></i>
                   <div>
                     <h6>Review Donations</h6>
                     <p>{{ dashboardStats?.pendingDonations || 0 }} pending</p>
                   </div>
-                </a>
+                </div>
               </div>
+              
+              <!-- 📞 Handle Complaints - CHANGE TO CLICK HANDLER -->
               <div class="col-md-6">
-                <a routerLink="/admin/complaints" class="quick-action-card">
+                <div class="quick-action-card" style="cursor: pointer;" (click)="navigateToComplaints()">
                   <i class="fas fa-headset"></i>
                   <div>
                     <h6>Handle Complaints</h6>
                     <p>{{ dashboardStats?.pendingComplaints || 0 }} pending</p>
                   </div>
-                </a>
+                </div>
               </div>
             </div>
           </div>

@@ -10,11 +10,11 @@ import { MemberSearchComponent } from './components/members/member-search/member
 import { MemberDetailsComponent } from './components/members/member-details/member-details';
 import { DonationRequestsComponent } from './components/donations/donation-requests/donation-requests';
 import { DonationHistoryComponent } from './components/donations/donation-history/donation-history';
-// import { ComplaintDashboardComponent } from './components/complaints/complaint-dashboard/complaint-dashboard';
-// import { ComplaintDetailsComponent } from './components/complaints/complaint-details/complaint-details';
-// import { ComplaintManagementComponent } from './components/complaints/complaint-management/complaint-management';
-// import { AnalyticsDashboardComponent } from './components/reports/analytics-dashboard/analytics-dashboard';
-// import { AdminProfileComponent } from './components/profile/admin-profile/admin-profile';
+import { ComplaintDashboardComponent } from './components/complaints/complaint-dashboard/complaint-dashboard';
+import { ComplaintDetailsComponent } from './components/complaints/complaint-details/complaint-details';
+import { ComplaintManagementComponent } from './components/complaints/complaint-management/complaint-management';
+import { AnalyticsDashboard } from './components/reports/analytics-dashboard/analytics-dashboard';
+import { AdminProfileComponent } from './components/profile/admin-profile/admin-profile';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -35,11 +35,11 @@ export const routes: Routes = [
       { path: 'members/:id', component: MemberDetailsComponent },
       { path: 'donations', component: DonationRequestsComponent },
       { path: 'donations/history', component: DonationHistoryComponent },
-      // { path: 'complaints', component: ComplaintDashboardComponent },
-      // { path: 'complaints/:id', component: ComplaintDetailsComponent },
-      // { path: 'complaints/manage', component: ComplaintManagementComponent },
-      // { path: 'reports', component: AnalyticsDashboardComponent },
-      // { path: 'profile', component: AdminProfileComponent }
+      { path: 'complaints', component: ComplaintDashboardComponent },
+      { path: 'complaints/:id', component: ComplaintDetailsComponent },
+      { path: 'complaints/manage', component: ComplaintManagementComponent },
+      { path: 'reports', component: AnalyticsDashboard },
+      { path: 'profile', component: AdminProfileComponent }
     ]
   },
   { path: '**', redirectTo: '/login' }

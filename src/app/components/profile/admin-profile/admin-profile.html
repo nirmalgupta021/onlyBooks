@@ -1,1 +1,379 @@
-<p>admin-profile works!</p>
+<div class="admin-profile-container">
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="h3 mb-0 text-gradient">Admin Profile</h2>
+      <p class="text-muted mb-0">Manage your account settings and preferences</p>
+    </div>
+    <div class="d-flex gap-2">
+      <!-- 🔧 BACKEND STATUS INDICATOR -->
+      <div class="d-flex align-items-center me-3">
+        <span [class]="getBackendStatusClass()">
+          <i [class]="getBackendStatusIcon()" class="me-1"></i>
+          {{ getBackendStatus() }}
+        </span>
+      </div>
+      <button class="btn btn-outline-secondary" (click)="goBack()">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+      </button>
+      <button class="btn btn-primary" (click)="refreshProfile()">
+        <i class="fas fa-sync me-2"></i>Refresh
+      </button>
+    </div>
+  </div>
+
+  <!-- 🔧 BACKEND CONNECTION NOTICE -->
+  <div *ngIf="!isBackendConnected" class="alert alert-warning mb-4">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Development Mode:</strong> Profile and password changes are disabled until backend is connected. Only viewing is available.
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading profile data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+    <button class="btn btn-sm btn-outline-danger ms-2" (click)="loadAdminProfile()">
+      Try Again
+    </button>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!isLoading && !error && currentAdmin">
+    <div class="row g-4">
+      <!-- Left Column - Profile Information -->
+      <div class="col-lg-8">
+        <!-- Basic Information Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-user me-2"></i>Profile Information
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="profile-item mb-3">
+                  <label class="profile-label">Full Name</label>
+                  <div class="profile-value fw-bold">{{ currentAdmin.name }}</div>
+                </div>
+
+                <div class="profile-item mb-3">
+                  <label class="profile-label">Email Address</label>
+                  <div class="profile-value">
+                    <i class="fas fa-envelope me-2 text-primary"></i>
+                    {{ currentAdmin.email }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="profile-item mb-3">
+                  <label class="profile-label">Admin ID</label>
+                  <div class="profile-value">
+                    <code>{{ currentAdmin.id }}</code>
+                  </div>
+                </div>
+
+                <div class="profile-item mb-3">
+                  <label class="profile-label">Role</label>
+                  <div class="profile-value">
+                    <span class="badge bg-primary">
+                      <i class="fas fa-shield-alt me-1"></i>
+                      Administrator
+                    </span>
+                  </div>
+                </div>
+
+                <!-- SHOW LAST LOGIN -->
+                <div class="profile-item mb-3">
+                  <label class="profile-label">Last Login</label>
+                  <div class="profile-value">
+                    <i class="fas fa-clock me-2 text-info"></i>
+                    {{ formatDate(lastLogin) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backend Integration Notice -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-chart-bar me-2"></i>Account Statistics
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="text-center py-4">
+              <i class="fas fa-server fa-2x text-muted mb-3"></i>
+              <h6 class="text-muted mb-2">Statistics Available When Backend Connected</h6>
+              <p class="text-muted mb-0">Login count, action history, and detailed statistics will appear here once the backend is integrated.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-history me-2"></i>Recent Activity
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="text-center py-4">
+              <i class="fas fa-clock fa-2x text-muted mb-3"></i>
+              <p class="text-muted">Activity tracking will be available when backend is connected</p>
+              <small class="text-muted">Login history and action logs will appear here</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Actions -->
+      <div class="col-lg-4">
+        <!-- Profile Actions Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-cogs me-2"></i>Profile Actions
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <!-- 🔧 DISABLE BUTTONS WHEN BACKEND NOT CONNECTED -->
+              <button 
+                class="btn"
+                [class.btn-outline-primary]="isBackendConnected"
+                [class.btn-outline-secondary]="!isBackendConnected"
+                [disabled]="!isBackendConnected"
+                (click)="openProfileModal()"
+              >
+                <i class="fas fa-edit me-2"></i>Edit Profile
+                <span *ngIf="!isBackendConnected" class="ms-2">
+                  <i class="fas fa-lock text-muted"></i>
+                </span>
+              </button>
+
+              <button 
+                class="btn"
+                [class.btn-outline-warning]="isBackendConnected"
+                [class.btn-outline-secondary]="!isBackendConnected"
+                [disabled]="!isBackendConnected"
+                (click)="openPasswordModal()"
+              >
+                <i class="fas fa-lock me-2"></i>Change Password
+                <span *ngIf="!isBackendConnected" class="ms-2">
+                  <i class="fas fa-lock text-muted"></i>
+                </span>
+              </button>
+
+              <button class="btn btn-outline-info" (click)="refreshProfile()">
+                <i class="fas fa-sync me-2"></i>Refresh Data
+              </button>
+
+              <hr class="my-2">
+
+              <button class="btn btn-outline-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt me-2"></i>Logout
+              </button>
+            </div>
+
+            <!-- 🔧 BACKEND CONNECTION HELP -->
+            <div *ngIf="!isBackendConnected" class="mt-3">
+              <div class="alert alert-light">
+                <small class="text-muted">
+                  <i class="fas fa-info-circle me-1"></i>
+                  Connect your Spring Boot backend to enable profile editing and password changes.
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Summary Card -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-info-circle me-2"></i>Account Summary
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="summary-item">
+              <div class="summary-label">Last Login</div>
+              <div class="summary-value">{{ formatDate(lastLogin) }}</div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-label">Status</div>
+              <div class="summary-value">
+                <span class="badge bg-success">
+                  <i class="fas fa-check-circle me-1"></i>Active
+                </span>
+              </div>
+            </div>
+
+            <div class="summary-item">
+              <div class="summary-label">Security Level</div>
+              <div class="summary-value">
+                <span class="badge bg-info">
+                  <i class="fas fa-shield-alt me-1"></i>High
+                </span>
+              </div>
+            </div>
+
+            <!-- 🔧 DYNAMIC BACKEND STATUS -->
+            <div class="summary-item">
+              <div class="summary-label">Backend Status</div>
+              <div class="summary-value">
+                <span [class]="getBackendStatusClass()">
+                  <i [class]="getBackendStatusIcon()" class="me-1"></i>
+                  {{ getBackendStatus() }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Edit Modal - ONLY WHEN BACKEND CONNECTED -->
+<div class="modal fade" [class.show]="showProfileModal" [style.display]="showProfileModal ? 'block' : 'none'" *ngIf="showProfileModal && isBackendConnected">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-edit me-2"></i>Edit Profile
+        </h5>
+        <button type="button" class="btn-close" (click)="closeProfileModal()"></button>
+      </div>
+      <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              id="name"
+              class="form-control"
+              formControlName="name"
+              [class.is-invalid]="name?.invalid && name?.touched"
+            />
+            <div class="invalid-feedback" *ngIf="name?.invalid && name?.touched">
+              <div *ngIf="name?.errors?.['required']">Name is required</div>
+              <div *ngIf="name?.errors?.['minlength']">Name must be at least 2 characters</div>
+              <div *ngIf="name?.errors?.['maxlength']">Name must not exceed 100 characters</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              formControlName="email"
+              [class.is-invalid]="email?.invalid && email?.touched"
+            />
+            <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+              <div *ngIf="email?.errors?.['required']">Email is required</div>
+              <div *ngIf="email?.errors?.['email']">Please enter a valid email</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeProfileModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || isUpdatingProfile">
+            <span *ngIf="isUpdatingProfile" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!isUpdatingProfile" class="fas fa-save me-2"></i>
+            {{ isUpdatingProfile ? 'Updating...' : 'Update Profile' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Password Change Modal - ONLY WHEN BACKEND CONNECTED -->
+<div class="modal fade" [class.show]="showPasswordModal" [style.display]="showPasswordModal ? 'block' : 'none'" *ngIf="showPasswordModal && isBackendConnected">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-lock me-2"></i>Change Password
+        </h5>
+        <button type="button" class="btn-close" (click)="closePasswordModal()"></button>
+      </div>
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Current Password <span class="text-danger">*</span></label>
+            <input
+              type="password"
+              id="currentPassword"
+              class="form-control"
+              formControlName="currentPassword"
+              [class.is-invalid]="currentPassword?.invalid && currentPassword?.touched"
+            />
+            <div class="invalid-feedback" *ngIf="currentPassword?.invalid && currentPassword?.touched">
+              <div *ngIf="currentPassword?.errors?.['required']">Current password is required</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">New Password <span class="text-danger">*</span></label>
+            <input
+              type="password"
+              id="newPassword"
+              class="form-control"
+              formControlName="newPassword"
+              [class.is-invalid]="newPassword?.invalid && newPassword?.touched"
+            />
+            <div class="invalid-feedback" *ngIf="newPassword?.invalid && newPassword?.touched">
+              <div *ngIf="newPassword?.errors?.['required']">New password is required</div>
+              <div *ngIf="newPassword?.errors?.['minlength']">Password must be at least 6 characters</div>
+              <div *ngIf="newPassword?.errors?.['maxlength']">Password must not exceed 20 characters</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-control"
+              formControlName="confirmPassword"
+              [class.is-invalid]="confirmPassword?.invalid && confirmPassword?.touched"
+            />
+            <div class="invalid-feedback" *ngIf="confirmPassword?.invalid && confirmPassword?.touched">
+              <div *ngIf="confirmPassword?.errors?.['required']">Please confirm your new password</div>
+            </div>
+            <div class="invalid-feedback" *ngIf="passwordForm.errors?.['passwordMismatch'] && confirmPassword?.touched">
+              Passwords do not match
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closePasswordModal()">Cancel</button>
+          <button type="submit" class="btn btn-warning" [disabled]="passwordForm.invalid || isChangingPassword">
+            <span *ngIf="isChangingPassword" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!isChangingPassword" class="fas fa-key me-2"></i>
+            {{ isChangingPassword ? 'Changing...' : 'Change Password' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrops -->
+<div class="modal-backdrop fade show" *ngIf="showProfileModal" (click)="closeProfileModal()"></div>
+<div class="modal-backdrop fade show" *ngIf="showPasswordModal" (click)="closePasswordModal()"></div>

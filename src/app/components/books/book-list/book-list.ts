@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BookService } from '../../../services/book';
 import { NotificationService } from '../../../services/notification';
@@ -39,7 +39,8 @@ export class BookListComponent implements OnInit {
 
   constructor(
     private bookService: BookService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -108,13 +109,11 @@ export class BookListComponent implements OnInit {
   }
 
   viewBorrowers(bookId: string) {
-    // Navigate to borrowers view
-    // Router navigation will be handled here
+    this.router.navigate(['/admin/books/borrowers', bookId]);
   }
 
   editBook(bookId: string) {
-    // Navigate to edit book
-    // Router navigation will be handled here
+    this.router.navigate(['/admin/books/edit', bookId]);
   }
 
   deleteBook(book: Book) {

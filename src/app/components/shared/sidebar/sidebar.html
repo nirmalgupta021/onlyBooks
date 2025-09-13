@@ -28,12 +28,12 @@
         <div class="collapse" id="booksSubmenu" [class.show]="isBookMenuOpen">
           <ul class="nav flex-column ms-3">
             <li class="nav-item">
-              <a class="nav-link sub-link" routerLink="/admin/books" routerLinkActive="active">
+              <a class="nav-link sub-link" routerLink="/admin/books" routerLinkActive="active" [class.active]="isOnBooksListPage()">
                 <i class="fas fa-list me-2"></i>All Books
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link sub-link" routerLink="/admin/books/add" routerLinkActive="active">
+              <a class="nav-link sub-link" routerLink="/admin/books/add" routerLinkActive="active" [class.active]="isOnAddBookPage()">
                 <i class="fas fa-plus me-2"></i>Add Book
               </a>
             </li>
@@ -64,7 +64,7 @@
         <div class="collapse" id="donationsSubmenu" [class.show]="isDonationMenuOpen">
           <ul class="nav flex-column ms-3">
             <li class="nav-item">
-              <a class="nav-link sub-link" routerLink="/admin/donations" routerLinkActive="active">
+              <a class="nav-link sub-link" routerLink="/admin/donations" routerLinkActive="active" [class.active]="isOnPendingDonationsPage()">
                 <i class="fas fa-clock me-2"></i>Pending Requests
                 <span class="badge bg-warning ms-auto" *ngIf="pendingDonationsCount > 0">
                   {{ pendingDonationsCount }}
@@ -72,7 +72,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link sub-link" routerLink="/admin/donations/history" routerLinkActive="active">
+              <a class="nav-link sub-link" routerLink="/admin/donations/history" routerLinkActive="active" [class.active]="isOnDonationHistoryPage()">
                 <i class="fas fa-history me-2"></i>History
               </a>
             </li>
@@ -96,7 +96,7 @@
         <div class="collapse" id="complaintsSubmenu" [class.show]="isComplaintMenuOpen">
           <ul class="nav flex-column ms-3">
             <li class="nav-item">
-              <a class="nav-link sub-link" routerLink="/admin/complaints" routerLinkActive="active">
+              <a class="nav-link sub-link" routerLink="/admin/complaints" routerLinkActive="active" [class.active]="isOnAllComplaintsPage()">
                 <i class="fas fa-list me-2"></i>All Complaints
                 <span class="badge bg-danger ms-auto" *ngIf="pendingComplaintsCount > 0">
                   {{ pendingComplaintsCount }}
@@ -104,7 +104,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link sub-link" routerLink="/admin/complaints/manage" routerLinkActive="active">
+              <a class="nav-link sub-link" routerLink="/admin/complaints/manage" routerLinkActive="active" [class.active]="isOnManageComplaintsPage()">
                 <i class="fas fa-cogs me-2"></i>Manage
               </a>
             </li>

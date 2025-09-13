@@ -1,0 +1,275 @@
+.analytics-dashboard-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 60px);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Metric Cards */
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.metric-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.2rem;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.metric-icon.bg-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.metric-icon.bg-success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+.metric-icon.bg-info { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); }
+.metric-icon.bg-warning { background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); }
+.metric-icon.bg-secondary { background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); }
+.metric-icon.bg-danger { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+
+.metric-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Cards */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  background: white;
+}
+
+.card-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-bottom: 1px solid #dee2e6;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 16px 20px;
+}
+
+.card-title {
+  color: #333;
+  font-weight: 600;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Chart Container */
+.chart-container {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-placeholder {
+  text-align: center;
+  padding: 40px;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  width: 100%;
+}
+
+/* Top Performers */
+.top-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.top-item:last-child {
+  border-bottom: none;
+}
+
+.top-rank {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.top-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.top-title {
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.top-subtitle {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.top-metric {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.top-metric .metric-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #667eea;
+  display: block;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Form Controls */
+.form-select {
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  font-size: 0.875rem;
+}
+
+.form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+}
+
+/* Loading State */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #667eea;
+}
+
+/* Alert */
+.alert {
+  border-radius: 8px;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  border-color: #ffeaa7;
+  color: #856404;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .analytics-dashboard-container {
+    padding: 15px;
+  }
+
+  .metric-card {
+    margin-bottom: 15px;
+    padding: 15px;
+  }
+
+  .metric-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    font-size: 1rem;
+  }
+
+  .metric-value {
+    font-size: 1.3rem;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+  }
+
+  .chart-container {
+    height: 250px;
+  }
+
+  .chart-placeholder {
+    padding: 20px;
+  }
+
+  .d-flex.gap-2 {
+    flex-direction: column;
+  }
+
+  .d-flex.gap-2 .btn {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card, .metric-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Utility Classes */
+.text-success { color: #28a745 !important; }
+.text-danger { color: #dc3545 !important; }
+.text-warning { color: #ffc107 !important; }
+.text-info { color: #17a2b8 !important; }

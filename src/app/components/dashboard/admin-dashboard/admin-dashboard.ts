@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth';
 import { NotificationService } from '../../../services/notification';
 import { DashboardStats, RecentActivity } from '../../../models/dashboard-stats';
 import { Admin } from '../../../models/admin';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -23,7 +24,8 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private dashboardService: DashboardService,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -84,5 +86,35 @@ export class AdminDashboardComponent implements OnInit {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  navigateToBooks() {
+    this.router.navigate(['/admin/books']);
+  }
+
+  navigateToMembers() {
+    this.router.navigate(['/admin/members']);  
+  }
+
+  navigateToDonations() {
+    this.router.navigate(['/admin/donations']);
+  }
+
+  // For future complaint integration
+  navigateToComplaints() {
+    this.router.navigate(['/admin/complaints']);
+  }
+
+  // Navigation to specific filtered views
+  navigateToBookManagement() {
+    this.router.navigate(['/admin/books/add']);
+  }
+
+  navigateToMemberSearch() {
+    this.router.navigate(['/admin/members/search']);
+  }
+
+  navigateToPendingDonations() {
+    this.router.navigate(['/admin/donations'], { queryParams: { status: 'Pending' } });
   }
 }
